@@ -7,3 +7,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## PizzaHub — Pizza Ordering & Delivery Platform
+
+**Project Overview**
+PizzaHub is a platform where customers discover local pizza shops, browse menus, and order food online. Vendors manage their shops, menus, and orders, while admins oversee users, menu approvals, and platform transactions.
