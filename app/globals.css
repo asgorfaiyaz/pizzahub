@@ -91,7 +91,7 @@ h6 {
   --primary-foreground: oklch(0.99 0.008 85);
   --secondary: oklch(0.5 0.12 145);
   --secondary-foreground: oklch(0.99 0.008 85);
-  --accent: oklch(0.87 0.16 82);
+  --accent: oklch(0.94 0.05 78);
   --accent-foreground: oklch(0.25 0.045 48);
 
   --muted: oklch(0.94 0.022 82);
@@ -140,14 +140,14 @@ h6 {
   --popover: var(--surface-overlay);
   --popover-foreground: var(--foreground);
 
-  --primary: oklch(0.68 0.16 32);
-  --primary-foreground: oklch(0.2 0.03 45);
+  --primary: oklch(0.6 0.18 32);
+  --primary-foreground: oklch(0.98 0.012 85);
   --secondary: oklch(0.68 0.12 145);
   --secondary-foreground: oklch(0.18 0.022 45);
-  --accent: oklch(0.78 0.14 82);
-  --accent-foreground: oklch(0.2 0.03 45);
+  --accent: oklch(0.29 0.045 50);
+  --accent-foreground: oklch(0.95 0.018 85);
 
-  --muted: oklch(0.27 0.03 45);
+  --muted: oklch(0.27 0.03 46);
   --muted-foreground: oklch(0.75 0.025 78);
   --destructive: oklch(0.68 0.17 25);
   --border: oklch(0.95 0.018 85 / 14%);
