@@ -1,8 +1,11 @@
-export default function DashboardPage() {
-  return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
-      <p className="mt-3 text-muted-foreground">Your orders and saved pizza shops will appear here.</p>
-    </main>
-  )
+import { redirect } from "next/navigation";
+import { USER_ROLES, type UserRole } from "@/lib/roles";
+import { getServerSession } from "@/lib/server-session";
+export const instant = false;
+export default async function DashboardIndexPage() {
+  const session = await getServerSession();
+  const role = session?.user.role;
+  const destination = USER_ROLES.includes(role as UserRole) ? role : "customer";
+
+  redirect(`/dashboard/${destination}`);
 }
