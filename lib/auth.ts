@@ -2,6 +2,7 @@ import { setServers } from "node:dns/promises";
 // Force Node.js to use Cloudflare and Google DNS
 setServers(["1.1.1.1", "8.8.8.8"]);
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { jwt } from "better-auth/plugins";
@@ -22,9 +23,31 @@ export const auth = betterAuth({
     additionalFields: {
       role: {
         type: [...USER_ROLES],
-        required: true,
+        required: false,
         defaultValue: "customer",
         input: true,
+      },
+      isBlocked: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: false,
+      },
+      businessName: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      subscriptionPlan: {
+        type: ["free", "premium"],
+        required: false,
+        defaultValue: "free",
+        input: false,
+      },
+      subscriptionExpiresAt: {
+        type: "date",
+        required: false,
+        input: false,
       },
     },
   },

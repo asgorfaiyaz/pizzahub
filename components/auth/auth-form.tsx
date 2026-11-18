@@ -31,6 +31,15 @@ const signInSchema = z.object({
 const signUpSchema = signInSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters.").max(80),
   role: z.enum(["customer", "vendor"]),
+  businessName: z.string().trim().max(120).optional(),
+}).superRefine((values, context) => {
+  if (values.role === "vendor" && !values.businessName?.trim()) {
+    context.addIssue({
+      code: "custom",
+      path: ["businessName"],
+      message: "Business name is required for vendor accounts.",
+    });
+  }
 });
 
 type AuthValues = {
@@ -38,6 +47,7 @@ type AuthValues = {
   email: string;
   password: string;
   role?: "customer" | "vendor";
+  businessName?: string;
 };
 
 export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
@@ -46,7 +56,13 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
   const [googlePending, setGooglePending] = useState(false);
   const form = useForm<AuthValues>({
     resolver: zodResolver(isSignUp ? signUpSchema : signInSchema) as never,
-    defaultValues: { name: "", email: "", password: "", role: "customer" },
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      role: "customer",
+      businessName: "",
+    },
   });
 
   async function onSubmit(values: AuthValues) {
@@ -57,6 +73,7 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             email: values.email,
             password: values.password,
             role: values.role ?? "customer",
+            businessName: values.businessName?.trim() || undefined,
             callbackURL: "/sign-in",
           })
         : await authClient.signIn.email({
@@ -153,6 +170,13 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
           {isSignUp ? (
             <RolePicker control={form.control} setValue={form.setValue} />
           ) : null}
+          {isSignUp ? (
+            <BusinessNameField
+              control={form.control}
+              register={form.register}
+              error={form.formState.errors.businessName}
+            />
+          ) : null}
           <Field data-invalid={!!form.formState.errors.email}>
             <FieldLabel htmlFor="email">Email address</FieldLabel>
             <Input
@@ -227,6 +251,34 @@ const RolePicker = function RolePicker({
       <p className="text-xs text-muted-foreground">
         Customer accounts can order pizza; vendor accounts can manage a shop.
       </p>
+    </Field>
+  );
+};
+
+const BusinessNameField = function BusinessNameField({
+  control,
+  register,
+  error,
+}: {
+  control: Control<AuthValues>;
+  register: ReturnType<typeof useForm<AuthValues>>["register"];
+  error?: { message?: string };
+}) {
+  const selectedRole = useWatch({ control, name: "role" });
+
+  if (selectedRole !== "vendor") return null;
+
+  return (
+    <Field data-invalid={!!error}>
+      <FieldLabel htmlFor="businessName">Business name</FieldLabel>
+      <Input
+        id="businessName"
+        autoComplete="organization"
+        placeholder="Alex's Pizza"
+        aria-invalid={!!error}
+        {...register("businessName")}
+      />
+      <FieldError errors={[error]} />
     </Field>
   );
 };
