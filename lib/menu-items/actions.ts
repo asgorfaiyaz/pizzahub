@@ -11,7 +11,7 @@ import type {
 } from "./types";
 
 export async function createMenuItem(input: CreateMenuItemInput) {
-  return serverApiFetch<ApiResponse<MenuItem>>("/menu-items", {
+  return serverApiFetch<ApiResponse<MenuItem>>("/vendors/menu-items", {
     auth: "required",
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -32,7 +32,7 @@ export async function updateMenuItem(id: string, input: UpdateMenuItemInput) {
   }
 
   return serverApiFetch<ApiResponse<MenuItem>>(
-    `/menu-items/${encodeURIComponent(id)}`,
+    `/vendors/menu-items/${encodeURIComponent(id)}`,
     {
       auth: "required",
       method: "PATCH",
@@ -44,10 +44,19 @@ export async function updateMenuItem(id: string, input: UpdateMenuItemInput) {
 
 export async function deleteMenuItem(id: string) {
   return serverApiFetch<ActionResponse>(
-    `/menu-items/${encodeURIComponent(id)}`,
+    `/vendors/menu-items/${encodeURIComponent(id)}`,
     {
       auth: "required",
       method: "DELETE",
     },
   );
+}
+
+export async function setMenuItemAvailability(
+  id: string,
+  isAvailable: boolean,
+) {
+  if (!id) throw new Error("A menu item id is required.");
+
+  return updateMenuItem(id, { status: isAvailable ? "approved" : "inactive" });
 }

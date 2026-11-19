@@ -24,10 +24,12 @@ export type CreateMenuItemInput = {
   images: string[];
 };
 
-export type UpdateMenuItemInput = Partial<CreateMenuItemInput>;
+export type UpdateMenuItemInput = Partial<CreateMenuItemInput> & {
+  status?: MenuItemStatus;
+};
 
 export type MenuItem = CreateMenuItemInput & {
-  id: string;
+  _id: string;
   status: MenuItemStatus;
 };
 

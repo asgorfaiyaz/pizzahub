@@ -12,6 +12,18 @@ export async function getMenuItems(): Promise<MenuItem[]> {
   return response.data;
 }
 
+export async function getVendorMenuItems(): Promise<MenuItem[]> {
+  const response = await serverApiFetch<MenuItemsResponse>(
+    "/vendors/menu-items",
+    {
+      auth: "required",
+      method: "GET",
+    },
+  );
+
+  return response.data;
+}
+
 export async function getMenuItemById(id: string): Promise<MenuItem> {
   const response = await serverApiFetch<MenuItemResponse>(
     `/menu-items/${encodeURIComponent(id)}`,
