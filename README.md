@@ -1,3 +1,4 @@
-## Key Learning: `serverApiFetch`
+## Key Learnings
 
-I created a reusable, server-only `serverApiFetch` utility to centralize API communication. It handles the backend URL, session-token authentication, public or protected requests, response parsing, and errors in one place. This keeps feature actions focused on business logic and avoids repeating fetch and authentication code across the project.
+- **Reusable API client:** `serverApiFetch` centralizes API URLs, authentication, response parsing, and error handling for public and protected requests.
+- **Secure image uploads:** Menu images are validated in the form, uploaded to ImgBB through a server action, and sent to the backend as image URLs without exposing the API key.
