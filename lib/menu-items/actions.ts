@@ -1,5 +1,6 @@
 "use server";
 
+import { uploadImageToImgBB } from "@/lib/imgbb";
 import { serverApiFetch } from "@/lib/server-api";
 import type {
   ActionResponse,
@@ -19,6 +20,10 @@ export async function createMenuItem(input: CreateMenuItemInput) {
       status: "pending",
     }),
   });
+}
+
+export async function uploadMenuItemImages(files: File[]): Promise<string[]> {
+  return Promise.all(files.map(uploadImageToImgBB));
 }
 
 export async function updateMenuItem(id: string, input: UpdateMenuItemInput) {

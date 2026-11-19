@@ -4,9 +4,20 @@ export type MenuItemStatus =
   | "rejected"
   | "inactive";
 
+export const MENU_ITEM_CATEGORIES = [
+  "Classic Pizzas",
+  "Vegetarian Pizzas",
+  "Meat Lovers",
+  "Specialty / Gourmet Pizzas",
+  "Sides & Appetizers",
+  "Beverages & Desserts",
+] as const;
+
+export type MenuItemCategory = (typeof MENU_ITEM_CATEGORIES)[number];
+
 export type CreateMenuItemInput = {
   itemName: string;
-  category: string;
+  category: MenuItemCategory;
   description: string;
   price: number;
   location: string;
