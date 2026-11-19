@@ -47,6 +47,8 @@ type MenuItemFormProps = {
   mode?: "create" | "update";
   menuItemId?: string;
   defaultValues?: Partial<MenuItem>;
+  /** Where to navigate after a successful save or cancel. */
+  returnTo?: string;
 };
 
 const MAX_MENU_ITEM_IMAGES = 5;
@@ -56,6 +58,7 @@ export function MenuItemForm({
   mode = "create",
   menuItemId,
   defaultValues,
+  returnTo,
 }: MenuItemFormProps) {
   const router = useRouter();
   const isUpdate = mode === "update";
@@ -106,7 +109,11 @@ export function MenuItemForm({
         setSelectedImageFiles([]);
       }
 
-      router.refresh();
+      if (returnTo) {
+        router.push(returnTo);
+      } else {
+        router.refresh();
+      }
     } catch (error) {
       toast.add({
         title: isUpdate ? "Update failed" : "Creation failed",
@@ -297,13 +304,25 @@ export function MenuItemForm({
           <FieldError errors={[form.formState.errors.images]} />
         </Field>
 
-        <Button type="submit" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting
-            ? "Saving..."
-            : isUpdate
-              ? "Update menu item"
-              : "Create menu item"}
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting
+              ? "Saving..."
+              : isUpdate
+                ? "Update menu item"
+                : "Create menu item"}
+          </Button>
+          {returnTo && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={form.formState.isSubmitting}
+              onClick={() => router.push(returnTo)}
+            >
+              Cancel
+            </Button>
+          )}
+        </div>
       </FieldGroup>
     </form>
   );
