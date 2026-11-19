@@ -17,7 +17,7 @@ export function useAuthSession(): AuthSessionState {
         name: session.user.name,
         email: session.user.email,
         image: session.user.image ?? undefined,
-        role: session.user.role,
+        role: session.user.role ?? undefined,
       }
     : undefined
   const isAuthenticated = !!user
