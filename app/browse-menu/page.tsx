@@ -11,7 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 8;
 
 type BrowseMenuSearchParams = Record<string, string | string[] | undefined>;
 
