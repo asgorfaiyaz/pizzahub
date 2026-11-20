@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { SearchXIcon, UtensilsCrossedIcon } from "lucide-react";
 
-import { getMenuItems, getLocations } from "@/lib/menu-items/queries";
+import { getMenuItems, getLocations, type MenuItemsQuery } from "@/lib/menu-items/queries";
 import { BrowseMenuSearch } from "@/components/menu-items/browse-menu-search";
 import { BrowseMenuFilters } from "@/components/menu-items/browse-menu-filters";
 import { BrowseMenuPagination } from "@/components/menu-items/browse-menu-pagination";
@@ -110,16 +110,25 @@ async function BrowseMenuContent({
   const search = (first(params.search) ?? "").trim();
   const category = first(params.category) ?? "";
   const location = first(params.location) ?? "";
+  const sortBy = first(params.sortBy) ?? "";
+  const sortOrder = first(params.sortOrder) ?? "";
   const requestedPage = Math.max(1, Number(first(params.page)) || 1);
 
+  const query: MenuItemsQuery = {
+    search,
+    category,
+    location,
+    page: requestedPage,
+    limit: PAGE_SIZE,
+  };
+
+  if (sortBy) {
+    query.sortBy = sortBy;
+    query.sortOrder = sortOrder === "desc" ? "desc" : "asc";
+  }
+
   const [{ items, pagination }, locations] = await Promise.all([
-    getMenuItems({
-      search,
-      category,
-      location,
-      page: requestedPage,
-      limit: PAGE_SIZE,
-    }),
+    getMenuItems(query),
     getLocations(),
   ]);
 
@@ -159,6 +168,8 @@ async function BrowseMenuContent({
               search: search || undefined,
               category: category || undefined,
               location: location || undefined,
+              sortBy: sortBy || undefined,
+              sortOrder: sortOrder || undefined,
             }}
           />
         </>

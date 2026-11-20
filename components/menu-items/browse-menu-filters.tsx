@@ -37,6 +37,22 @@ export function BrowseMenuFilters({ locations }: BrowseMenuFiltersProps) {
     ...locations.map((value) => ({ value, label: value })),
   ];
 
+  const sortBy = searchParams.get("sortBy") ?? "";
+  const sortOrder = searchParams.get("sortOrder") ?? "";
+
+  const sortOptions = [
+    { value: "", label: "Default order" },
+    { value: "price-asc", label: "Price: low to high" },
+    { value: "price-desc", label: "Price: high to low" },
+  ];
+
+  const activeSort =
+    sortBy === "price"
+      ? sortOrder === "desc"
+        ? "price-desc"
+        : "price-asc"
+      : "";
+
   function updateFilter(key: "category" | "location", value: string) {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -54,8 +70,33 @@ export function BrowseMenuFilters({ locations }: BrowseMenuFiltersProps) {
     });
   }
 
+  function updateSort(value: string) {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === "price-asc") {
+      params.set("sortBy", "price");
+      params.set("sortOrder", "asc");
+    } else if (value === "price-desc") {
+      params.set("sortBy", "price");
+      params.set("sortOrder", "desc");
+    } else {
+      params.delete("sortBy");
+      params.delete("sortOrder");
+    }
+
+    // Any new sort starts from the first page.
+    params.delete("page");
+
+    const queryString = params.toString();
+    startTransition(() => {
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, {
+        scroll: false,
+      });
+    });
+  }
+
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <Select
         items={categoryOptions}
         value={category}
@@ -83,6 +124,23 @@ export function BrowseMenuFilters({ locations }: BrowseMenuFiltersProps) {
         </SelectTrigger>
         <SelectContent>
           {locationOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Select
+        items={sortOptions}
+        value={activeSort}
+        onValueChange={(value) => updateSort(value ?? "")}
+      >
+        <SelectTrigger aria-label="Sort by" className="sm:w-56">
+          <SelectValue placeholder="Default order" />
+        </SelectTrigger>
+        <SelectContent>
+          {sortOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
