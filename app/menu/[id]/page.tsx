@@ -106,6 +106,8 @@ async function MenuItemDetails(props: { params: Promise<{ id: string }> }) {
 
   const { canOrder, reason } = getOrderState(role, isOwnItem, item.status);
 
+  const vendor = item.vendor;
+
   return (
     <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6 lg:px-8">
       {/* Breadcrumb */}
@@ -152,7 +154,7 @@ async function MenuItemDetails(props: { params: Promise<{ id: string }> }) {
           ) : null}
 
           {/* Vendor */}
-          {item.user ? (
+          {vendor ? (
             <div className="mt-5 flex items-center gap-3 rounded-xl border bg-muted/30 p-4">
               <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-background">
                 <StoreIcon
@@ -162,10 +164,10 @@ async function MenuItemDetails(props: { params: Promise<{ id: string }> }) {
               </span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">
-                  {item.user.businessName ?? item.user.name}
+                  {vendor.businessName ?? vendor.name}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">
-                  {item.user.businessName ? `By ${item.user.name}` : "Vendor"}
+                  {vendor.businessName ? `By ${vendor.name}` : "Vendor"}
                 </p>
               </div>
             </div>

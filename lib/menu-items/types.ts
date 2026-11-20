@@ -38,7 +38,15 @@ export type MenuItem = CreateMenuItemInput & {
   _id: string;
   status: MenuItemStatus;
   vendorId?: string;
-  user?: VendorInfo;
+  /** Vendor who owns this item (remote field is `vendor`). */
+  vendor?: VendorInfo;
+};
+
+export type Pagination = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 };
 
 export type ApiResponseBase = {
@@ -52,6 +60,10 @@ export type ApiResponse<T> = ApiResponseBase & {
 
 export type ActionResponse = ApiResponseBase;
 
-export type MenuItemsResponse = ApiResponse<MenuItem[]>;
+export type MenuItemsResponse = ApiResponse<MenuItem[]> & {
+  pagination?: Pagination;
+};
+
+export type LocationsResponse = ApiResponse<string[]>;
 
 export type MenuItemResponse = ApiResponse<MenuItem>;
