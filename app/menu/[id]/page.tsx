@@ -50,9 +50,19 @@ function MenuItemDetailsSkeleton() {
 
 function getOrderState(
   role: UserRole | null | undefined,
-  isOwnItem: boolean,
   status: MenuItemStatus,
 ) {
+  if (role === "customer") {
+    if (status !== "approved") {
+      return {
+        canOrder: false,
+        reason: "This item isn't available for ordering right now.",
+      };
+    }
+
+    return { canOrder: true, reason: null };
+  }
+
   if (!role) {
     return {
       canOrder: false,
@@ -60,28 +70,10 @@ function getOrderState(
     };
   }
 
-  if (role === "admin") {
-    return {
-      canOrder: false,
-      reason: "Administrators cannot place customer orders.",
-    };
-  }
-
-  if (isOwnItem) {
-    return {
-      canOrder: false,
-      reason: "You cannot order your own menu items.",
-    };
-  }
-
-  if (status !== "approved") {
-    return {
-      canOrder: false,
-      reason: "This item isn't available for ordering right now.",
-    };
-  }
-
-  return { canOrder: true, reason: null };
+  return {
+    canOrder: false,
+    reason: "Only customers can place orders.",
+  };
 }
 
 // ─── Async data component ─────────────────────────────────────────────────────
@@ -99,12 +91,7 @@ async function MenuItemDetails(props: { params: Promise<{ id: string }> }) {
   const session = await getServerSession();
   const role = session?.user.role;
 
-  const isOwnItem =
-    role === "vendor" &&
-    Boolean(item.vendorId) &&
-    session?.user.id === item.vendorId;
-
-  const { canOrder, reason } = getOrderState(role, isOwnItem, item.status);
+  const { canOrder, reason } = getOrderState(role, item.status);
 
   const vendor = item.vendor;
 
