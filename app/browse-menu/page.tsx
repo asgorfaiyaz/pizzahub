@@ -61,7 +61,7 @@ async function MenuItemsList() {
         <MenuItemCard
           key={item._id}
           item={item}
-          href={`/browse-menu/${item._id}`}
+          href={`/menu/${item._id}`}
         />
       ))}
     </div>

@@ -28,9 +28,17 @@ export type UpdateMenuItemInput = Partial<CreateMenuItemInput> & {
   status?: MenuItemStatus;
 };
 
+export type VendorInfo = {
+  _id: string;
+  name: string;
+  businessName?: string;
+};
+
 export type MenuItem = CreateMenuItemInput & {
   _id: string;
   status: MenuItemStatus;
+  vendorId?: string;
+  user?: VendorInfo;
 };
 
 export type ApiResponseBase = {
