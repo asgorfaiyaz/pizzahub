@@ -1,7 +1,5 @@
-import { DashboardPage } from "@/components/dashboard/dashboard-page";
-import { dashboardLinks } from "@/app/dashboard/lib/dashboard-links";
+import { redirect } from "next/navigation";
 
 export default function CustomerProfileSettingsPage() {
-  return <DashboardPage item={dashboardLinks.customer[2]} />;
+  redirect("/profile-settings");
 }
-
