@@ -13,3 +13,13 @@ export type SubscriptionStatusResponse = {
   message: string;
   data: VendorSubscriptionStatus;
 };
+
+export type CheckoutSession = {
+  url: string;
+};
+
+export type CheckoutSessionResponse = {
+  success: boolean;
+  message: string;
+  data: CheckoutSession;
+};
