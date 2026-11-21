@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { XIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-import { createOrder } from "@/lib/orders/actions";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Field,
@@ -13,7 +12,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/toast";
 
 type OrderFormValues = {
   deliveryDate: string;
@@ -43,40 +41,21 @@ export function OrderForm({
     },
   });
 
-  async function onSubmit(values: OrderFormValues) {
-    try {
-      const result = await createOrder({
-        itemId,
-        deliveryDate: values.deliveryDate.trim(),
-        deliveryAddress: values.deliveryAddress.trim(),
-        message: values.message.trim() || undefined,
-      });
+  function onSubmit(values: OrderFormValues) {
+    const params = new URLSearchParams({ itemId });
 
-      if (!result.success) {
-        throw new Error(
-          result.message || "Failed to place your order. Please try again.",
-        );
-      }
-
-      toast.add({
-        title: "Order placed",
-        description: `Your order for ${itemName} has been placed. We'll deliver it to you soon.`,
-        type: "success",
-        timeout: 5000,
-      });
-
-      router.push("/dashboard/customer/orders");
-    } catch (error) {
-      toast.add({
-        title: "Order failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Unable to place your order. Please try again.",
-        type: "error",
-        timeout: 5000,
-      });
+    if (values.deliveryDate) params.set("deliveryDate", values.deliveryDate);
+    if (values.deliveryAddress.trim()) {
+      params.set("deliveryAddress", values.deliveryAddress.trim());
     }
+    if (values.message?.trim()) {
+      params.set("message", values.message.trim());
+    }
+
+    const queryString = params.toString();
+    router.push(
+      queryString ? `/checkout/demo?${queryString}` : "/checkout/demo",
+    );
   }
 
   return (
@@ -167,16 +146,11 @@ export function OrderForm({
         </Field>
 
         <div className="flex flex-wrap justify-end gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            disabled={form.formState.isSubmitting}
-          >
+          <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Placing…" : "Place order"}
+            Continue to checkout
           </Button>
         </div>
       </FieldGroup>
