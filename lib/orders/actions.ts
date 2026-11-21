@@ -21,7 +21,7 @@ export async function cancelOrder(orderId: string) {
     `/customers/orders/${encodeURIComponent(orderId)}/cancel`,
     {
       auth: "required",
-      method: "POST",
+      method: "PATCH",
     },
   );
 }
