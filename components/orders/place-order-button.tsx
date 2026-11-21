@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,13 @@ export function PlaceOrderButton({
 }: PlaceOrderButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handlePlace() {
+    if (isSubmitting || isPending) return;
+
+    setIsSubmitting(true);
+
     try {
       const result = await createOrder({
         itemId,
@@ -58,12 +63,16 @@ export function PlaceOrderButton({
         type: "error",
         timeout: 5000,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  const isBusy = isSubmitting || isPending;
+
   return (
-    <Button size="lg" disabled={isPending} onClick={handlePlace}>
-      {isPending ? "Placing…" : "Place order"}
+    <Button size="lg" disabled={isBusy} onClick={handlePlace}>
+      {isBusy ? "Placing…" : "Place order"}
     </Button>
   );
 }
