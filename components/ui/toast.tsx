@@ -14,7 +14,13 @@ function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
 }
 
 function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
-  return <ToastPrimitive.Portal data-slot="toast-portal" {...props} />
+  return (
+    <ToastPrimitive.Portal
+      data-slot="toast-portal"
+      className="z-[100]"
+      {...props}
+    />
+  )
 }
 
 function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {

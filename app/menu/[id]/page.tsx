@@ -5,15 +5,15 @@ import {
   ArrowLeftIcon,
   ChevronRightIcon,
   MapPinIcon,
-  ShoppingBagIcon,
   StoreIcon,
 } from "lucide-react";
 
 import { getMenuItemById } from "@/lib/menu-items/queries";
 import { getServerSession } from "@/lib/server-session";
 import { MenuItemGallery } from "@/components/menu-items/menu-item-gallery";
+import { OrderControl } from "@/components/orders/order-control";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { UserRole } from "@/lib/roles";
@@ -183,10 +183,11 @@ async function MenuItemDetails(props: { params: Promise<{ id: string }> }) {
 
             {canOrder ? (
               <div className="mt-3">
-                <Button size="lg">
-                  <ShoppingBagIcon />
-                  Order now
-                </Button>
+                <OrderControl
+                  itemId={item._id}
+                  itemName={item.itemName}
+                  price={item.price}
+                />
               </div>
             ) : (
               <p className="mt-3 rounded-xl border border-dashed bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
