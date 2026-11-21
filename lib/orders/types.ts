@@ -31,3 +31,13 @@ export type Order = {
 export type OrdersResponse = ApiResponse<Order[]>;
 
 export type CancelOrderResponse = ApiResponse<unknown>;
+
+export type CustomerOverview = {
+  total: number;
+  pending: number;
+  accepted: number;
+  rejected: number;
+  cancelled: number;
+};
+
+export type CustomerOverviewResponse = ApiResponse<CustomerOverview>;
