@@ -224,7 +224,20 @@ function PremiumState({
   );
 }
 
-async function SuccessContent({ sessionId }: { sessionId?: string }) {
+type SuccessSearchParams = {
+  session_id?: string | string[];
+};
+
+async function SuccessContent({
+  searchParams,
+}: {
+  searchParams: Promise<SuccessSearchParams>;
+}) {
+  const params = await searchParams;
+  const sessionId = Array.isArray(params.session_id)
+    ? params.session_id[0]
+    : params.session_id;
+
   let confirmation: PaymentConfirmation | null = null;
 
   if (sessionId) {
@@ -265,20 +278,15 @@ async function SuccessContent({ sessionId }: { sessionId?: string }) {
   return <PremiumState status={status} confirmation={confirmation} />;
 }
 
-export default async function SuccessPage({
+export default function SuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string | string[] }>;
+  searchParams: Promise<SuccessSearchParams>;
 }) {
-  const params = await searchParams;
-  const sessionId = Array.isArray(params.session_id)
-    ? params.session_id[0]
-    : params.session_id;
-
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
       <Suspense fallback={<SuccessSkeleton />}>
-        <SuccessContent sessionId={sessionId} />
+        <SuccessContent searchParams={searchParams} />
       </Suspense>
     </main>
   );
