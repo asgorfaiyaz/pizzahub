@@ -23,3 +23,18 @@ export type CheckoutSessionResponse = {
   message: string;
   data: CheckoutSession;
 };
+
+export type PaymentConfirmation = {
+  transactionId: string;
+  amount: number;
+  currency: string;
+  status: string;
+  plan: string;
+  createdAt: string;
+};
+
+export type PaymentConfirmationResponse = {
+  success: boolean;
+  message: string;
+  data: PaymentConfirmation;
+};
