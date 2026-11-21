@@ -32,6 +32,35 @@ export type OrdersResponse = ApiResponse<Order[]>;
 
 export type CancelOrderResponse = ApiResponse<unknown>;
 
+export type VendorOrderCustomer = {
+  _id: string;
+  name: string;
+  email: string;
+};
+
+export type VendorOrderItem = {
+  _id: string;
+  itemName: string;
+  images: string[];
+  price: number;
+  category: string;
+};
+
+export type VendorOrder = {
+  _id: string;
+  status: OrderStatus;
+  deliveryDate: string;
+  deliveryAddress: string;
+  customerMessage?: string;
+  createdAt: string;
+  customer: VendorOrderCustomer;
+  item: VendorOrderItem;
+};
+
+export type VendorOrdersResponse = ApiResponse<VendorOrder[]>;
+
+export type VendorOrderStatusUpdateResponse = ApiResponse<unknown>;
+
 export type CustomerOverview = {
   total: number;
   pending: number;
