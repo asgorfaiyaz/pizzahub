@@ -1,10 +1,11 @@
 import { setServers } from "node:dns/promises";
-// Force Node.js to use Cloudflare and Google DNS
-setServers(["1.1.1.1", "8.8.8.8"]);
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { USER_ROLES } from "@/lib/roles";
+
+// Force public DNS so MongoDB SRV records resolve reliably in this environment.
+setServers(["1.1.1.1", "8.8.8.8"]);
 
 const uri = process.env.MONGODB_URI;
 
