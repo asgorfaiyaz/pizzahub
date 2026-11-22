@@ -31,12 +31,14 @@ export type UpdateMenuItemInput = Partial<CreateMenuItemInput> & {
 export type VendorInfo = {
   _id: string;
   name: string;
+  email?: string;
   businessName?: string;
 };
 
 export type MenuItem = CreateMenuItemInput & {
   _id: string;
   status: MenuItemStatus;
+  createdAt?: string;
   vendorId?: string;
   /** Vendor who owns this item (remote field is `vendor`). */
   vendor?: VendorInfo;

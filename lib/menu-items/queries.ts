@@ -85,6 +85,54 @@ export async function getVendorMenuItems(): Promise<MenuItem[]> {
   return response.data;
 }
 
+export type AdminMenuItemsQuery = {
+  search?: string;
+  status?: string;
+  category?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type AdminMenuItemsPage = {
+  items: MenuItem[];
+  pagination: Pagination;
+};
+
+export async function getAdminMenuItems(
+  query: AdminMenuItemsQuery = {},
+): Promise<AdminMenuItemsPage> {
+  const params = new URLSearchParams();
+
+  if (query.search) params.set("search", query.search);
+  if (query.status && query.status !== "all")
+    params.set("status", query.status);
+  if (query.category && query.category !== "all") {
+    params.set("category", query.category);
+  }
+  if (query.page && query.page > 1) params.set("page", String(query.page));
+  if (query.limit) params.set("limit", String(query.limit));
+
+  const queryString = params.toString();
+
+  const response = await serverApiFetch<MenuItemsResponse>(
+    `/admin/menu-items${queryString ? `?${queryString}` : ""}`,
+    {
+      auth: "required",
+      method: "GET",
+    },
+  );
+  console.log(response);
+
+  const pagination = response.pagination ?? {
+    total: response.data.length,
+    page: query.page ?? 1,
+    limit: query.limit ?? response.data.length,
+    totalPages: 1,
+  };
+
+  return { items: response.data, pagination };
+}
+
 export async function getMenuItemById(id: string): Promise<MenuItem> {
   const response = await serverApiFetch<MenuItemResponse>(
     `/menu-items/${encodeURIComponent(id)}`,

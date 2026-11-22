@@ -7,6 +7,7 @@ import type {
   ApiResponse,
   CreateMenuItemInput,
   MenuItem,
+  MenuItemStatus,
   UpdateMenuItemInput,
 } from "./types";
 
@@ -59,4 +60,33 @@ export async function setMenuItemAvailability(
   if (!id) throw new Error("A menu item id is required.");
 
   return updateMenuItem(id, { status: isAvailable ? "approved" : "inactive" });
+}
+
+export async function setAdminMenuItemStatus(
+  id: string,
+  status: MenuItemStatus,
+) {
+  if (!id) throw new Error("A menu item id is required.");
+
+  return serverApiFetch<ActionResponse>(
+    `/admin/menu-items/${encodeURIComponent(id)}/status`,
+    {
+      auth: "required",
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    },
+  );
+}
+
+export async function deleteAdminMenuItem(id: string) {
+  if (!id) throw new Error("A menu item id is required.");
+
+  return serverApiFetch<ActionResponse>(
+    `/admin/menu-items/${encodeURIComponent(id)}`,
+    {
+      auth: "required",
+      method: "DELETE",
+    },
+  );
 }
