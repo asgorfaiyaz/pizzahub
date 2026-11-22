@@ -10,8 +10,9 @@ function DashboardAwareShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isDashboard =
     pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+  const isAuthRoute = pathname === "/sign-in" || pathname === "/sign-up";
 
-  if (isDashboard) {
+  if (isDashboard || isAuthRoute) {
     return children;
   }
 

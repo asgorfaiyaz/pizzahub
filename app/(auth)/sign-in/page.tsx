@@ -7,6 +7,12 @@ type SignInSearchParams = {
   reason?: string | string[];
 };
 
+const notices: Record<string, string> = {
+  blocked:
+    "Your account has been blocked. Contact support if you think this is a mistake.",
+  unauthorized: "Your session has expired. Please sign in again.",
+};
+
 function SignInCard({ reason }: { reason?: string }) {
   return (
     <AuthCard
@@ -18,13 +24,12 @@ function SignInCard({ reason }: { reason?: string }) {
         </>
       }
     >
-      {reason === "blocked" ? (
+      {reason && notices[reason] ? (
         <div
           role="alert"
           className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
         >
-          Your account has been blocked. Contact support if you think this is a
-          mistake.
+          {notices[reason]}
         </div>
       ) : null}
       <AuthForm mode="sign-in" />
