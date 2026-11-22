@@ -2,7 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { auth } from "@/lib/auth";
 
-const publicRoutes = ["/", "/browse-menu"];
+const publicRoutes = [
+  "/",
+  "/browse-menu",
+  "/unauthorized",
+  "/forbidden",
+];
 const authRoutes = ["/sign-in", "/sign-up"];
 
 function matchesRoute(pathname: string, route: string) {

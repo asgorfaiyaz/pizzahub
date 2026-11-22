@@ -69,8 +69,16 @@ export async function serverApiFetch<T>(
       `API request failed (${response.status}).`,
     );
 
+    if (response.status === 401) {
+      redirect("/unauthorized");
+    }
+
     if (response.status === 403 && getErrorCode(payload) === "ACCOUNT_BLOCKED") {
       redirect("/sign-in?reason=blocked");
+    }
+
+    if (response.status === 403) {
+      redirect("/forbidden");
     }
 
     throw new Error(message);
