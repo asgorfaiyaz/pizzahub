@@ -1,3 +1,18 @@
+export type AdminOverview = {
+  totalRegisteredUsers: number;
+  totalVendors: number;
+  totalCustomers: number;
+  totalMenuItems: number;
+  pendingMenuItems: number;
+  totalTransactions: number;
+};
+
+export type AdminOverviewResponse = {
+  success: boolean;
+  message: string;
+  data: AdminOverview;
+};
+
 export type User = {
   _id: string;
   name: string;

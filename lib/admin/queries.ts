@@ -2,11 +2,25 @@ import "server-only";
 
 import { serverApiFetch } from "@/lib/server-api";
 import type {
+  AdminOverview,
+  AdminOverviewResponse,
   User,
   UsersResponse,
   UserResponse,
   UsersPagination,
 } from "./types";
+
+export async function getAdminOverview(): Promise<AdminOverview> {
+  const response = await serverApiFetch<AdminOverviewResponse>(
+    "/admin/overview",
+    {
+      auth: "required",
+      method: "GET",
+    },
+  );
+
+  return response.data;
+}
 
 export type UsersQuery = {
   search?: string;
