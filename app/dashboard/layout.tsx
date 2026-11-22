@@ -28,7 +28,14 @@ async function DashboardContent({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider>
-      <DashboardSidebar role={role} />
+      <DashboardSidebar
+        role={role}
+        user={{
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image,
+        }}
+      />
       <main className="relative flex min-h-svh w-full flex-1 flex-col overflow-hidden bg-background">
         <header className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/80 md:px-6">
           <SidebarTrigger />
