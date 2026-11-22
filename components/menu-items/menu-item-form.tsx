@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { XIcon } from "lucide-react";
 import { Controller, useForm } from "react-hook-form";
 
 import {
@@ -63,6 +65,7 @@ export function MenuItemForm({
   const router = useRouter();
   const isUpdate = mode === "update";
   const [selectedImageFiles, setSelectedImageFiles] = useState<File[]>([]);
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
   const form = useForm<MenuItemFormValues>({
     defaultValues: {
       itemName: defaultValues?.itemName ?? "",
@@ -73,6 +76,11 @@ export function MenuItemForm({
       images: null,
     },
   });
+
+  const existingImages = (defaultValues?.images ?? []).filter(
+    (image) => !removedImages.includes(image),
+  );
+
   async function onSubmit(values: MenuItemFormValues) {
     try {
       const newImageUrls = await uploadMenuItemImages(selectedImageFiles);
@@ -82,7 +90,7 @@ export function MenuItemForm({
         description: values.description.trim(),
         price: values.price,
         location: values.location.trim(),
-        images: [...(defaultValues?.images ?? []), ...newImageUrls],
+        images: [...existingImages, ...newImageUrls],
       };
 
       if (isUpdate) {
@@ -139,11 +147,11 @@ export function MenuItemForm({
     validate: () => {
       const files = selectedImageFiles;
 
-      if (!files.length && !defaultValues?.images?.length) {
+      if (!files.length && !existingImages.length) {
         return "Add at least one image.";
       }
 
-      const totalImages = (defaultValues?.images?.length ?? 0) + files.length;
+      const totalImages = existingImages.length + files.length;
 
       if (totalImages > MAX_MENU_ITEM_IMAGES) {
         return `Choose up to ${MAX_MENU_ITEM_IMAGES} images.`;
@@ -270,6 +278,61 @@ export function MenuItemForm({
 
         <Field data-invalid={!!form.formState.errors.images}>
           <FieldLabel htmlFor="images">Menu images</FieldLabel>
+
+          {isUpdate && (defaultValues?.images?.length ?? 0) > 0 ? (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-foreground">
+                  Current images ({existingImages.length})
+                </p>
+                {removedImages.length > 0 ? (
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    className="h-auto p-0"
+                    onClick={() => setRemovedImages([])}
+                  >
+                    Restore all
+                  </Button>
+                ) : null}
+              </div>
+
+              {existingImages.length > 0 ? (
+                <ul className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+                  {existingImages.map((image, index) => (
+                    <li
+                      key={`${image}-${index}`}
+                      className="relative aspect-square overflow-hidden rounded-lg border bg-muted"
+                    >
+                      <Image
+                        src={image}
+                        alt="Current menu item"
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                      <button
+                        type="button"
+                        aria-label="Remove this image"
+                        onClick={() =>
+                          setRemovedImages((prev) => [...prev, image])
+                        }
+                        className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground"
+                      >
+                        <XIcon className="size-3.5" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="rounded-lg border border-dashed bg-muted/30 px-3 py-2 text-sm text-muted-foreground">
+                  All existing images will be removed. Add a new image below.
+                </p>
+              )}
+            </div>
+          ) : null}
+
           <Input
             id="images"
             type="file"
@@ -285,12 +348,16 @@ export function MenuItemForm({
             }}
           />
           <FieldDescription>
+            {existingImages.length
+              ? `${existingImages.length} current image${
+                  existingImages.length === 1 ? "" : "s"
+                }. `
+              : ""}
             {selectedImageFiles.length
-              ? selectedImageFiles.length +
-                (selectedImageFiles.length === 1
-                  ? " image selected. "
-                  : " images selected. ")
-              : "No images selected. "}
+              ? `${selectedImageFiles.length} new image${
+                  selectedImageFiles.length === 1 ? "" : "s"
+                } selected. `
+              : "No new images selected. "}
             Choose up to 5 images, each smaller than 5 MB.
           </FieldDescription>
           {selectedImageFiles.length > 0 ? (

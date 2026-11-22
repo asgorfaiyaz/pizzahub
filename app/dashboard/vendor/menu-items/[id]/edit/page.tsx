@@ -18,7 +18,6 @@ export default async function VendorEditMenuItemPage(props: {
   } catch {
     notFound();
   }
-
   return (
     <section className="mx-auto w-full max-w-5xl">
       {/* Breadcrumb */}

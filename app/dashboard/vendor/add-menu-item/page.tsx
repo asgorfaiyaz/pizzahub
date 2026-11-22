@@ -8,7 +8,7 @@ export default function VendorAddMenuItemPage() {
         Add a new item to your shop menu. New items are submitted for approval.
       </p>
       <div className="mt-8 rounded-xl border bg-card p-6">
-        <MenuItemForm />
+        <MenuItemForm returnTo="/dashboard/vendor/menu-items" />
       </div>
     </section>
   );
