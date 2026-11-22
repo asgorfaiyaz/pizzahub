@@ -6,11 +6,33 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { USER_ROLES } from "@/lib/roles";
 
-const client = new MongoClient(process.env.MONGODB_URI as string);
+const uri = process.env.MONGODB_URI;
+
+if (!uri) {
+  throw new Error("MONGODB_URI is not configured.");
+}
+
+// Reuse a single client across hot reloads and warm serverless invocations.
+// A smaller pool avoids exhausting Atlas connection limits on Vercel.
+const globalForMongo = globalThis as unknown as {
+  pizzaHubMongoClient?: MongoClient;
+};
+
+const client =
+  globalForMongo.pizzaHubMongoClient ??
+  new MongoClient(uri, {
+    maxPoolSize: 10,
+    serverSelectionTimeoutMS: 10_000,
+  });
+
+globalForMongo.pizzaHubMongoClient = client;
+
 export const db = client.db();
 
 export const auth = betterAuth({
-  database: mongodbAdapter(db, { client }),
+  // No `client` option: avoids transaction sessions that fail when the
+  // serverless runtime tears down the topology between invocations.
+  database: mongodbAdapter(db),
 
   emailAndPassword: {
     enabled: true,
