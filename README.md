@@ -11,6 +11,7 @@ PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js
 ## ✨ Features
 
 ### For everyone
+
 - **Homepage** with a pizza hero, approved featured items, category browsing, and subtle Motion animations
 - **Browse menu** with live search, status/category/location filters, sorting, and pagination
 - **Item details** with image gallery, restaurant/vendor info, related items, and ordering
@@ -19,12 +20,14 @@ PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js
 - **Dark mode** and a responsive, pizza-friendly design system
 
 ### Customers
+
 - Personal overview with order statistics
 - Order history with detailed delivery info, status, and cancellation for pending orders
 - Checkout demo flow and Stripe-backed premium upgrade success/cancel pages
 - Profile settings with name and avatar updates
 
 ### Vendors
+
 - Overview with live menu/order/subscription stats
 - Menu item management: create, edit, delete, availability, and ImgBB image uploads
 - Customer order management with status updates
@@ -32,12 +35,14 @@ PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js
 - Restaurant info page with editable location, hours, and phone
 
 ### Admins
+
 - Platform overview: users, vendors, customers, menu items, pending items, transactions
 - User management with search, role filtering, pagination, block/unblock, and detail dialogs
 - Menu moderation: approve, reject, set pending/inactive, and delete items
 - Transaction history with pagination
 
 ### Security & architecture
+
 - Edge proxy plus layout-level role guards (`customer`, `vendor`, `admin`)
 - Blocked accounts are redirected with a clear reason; sessions are revoked by the backend
 - Shared server-only API client (`serverApiFetch`) for auth headers, parsing, and error handling
@@ -48,29 +53,29 @@ PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js
 
 ## 🛠 Tech stack
 
-| Area | Packages |
-|---|---|
-| Framework | `next@16.4.6` (App Router, Cache Components, Turbopack), `react@19.3.0`, `react-dom@19.3.0` |
-| Language | `typescript@5` |
-| Styling | `tailwindcss@4.3.3`, `@tailwindcss/turbopack`, `tw-animate-css`, `class-variance-authority`, `cn` |
-| UI components | `shadcn`, `@base-ui/react`, `lucide-react`, `react-icons`, `next-themes` |
-| Animation | `motion` |
-| Forms & validation | `react-hook-form`, `zod`, `@hookform/resolvers` |
-| Auth & database | `better-auth`, `mongodb` |
-| Payments | Stripe (checkout sessions, confirmation, webhooks) |
-| Images | ImgBB upload API |
-| Notifications | `sonner` + shadcn toast primitives |
-| Tooling | `eslint`, `eslint-config-next`, `babel-plugin-react-compiler` |
+| Area               | Packages                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------- |
+| Framework          | `next@16.4.6` (App Router, Cache Components, Turbopack), `react@19.3.0`, `react-dom@19.3.0`       |
+| Language           | `typescript@5`                                                                                    |
+| Styling            | `tailwindcss@4.3.3`, `@tailwindcss/turbopack`, `tw-animate-css`, `class-variance-authority`, `cn` |
+| UI components      | `shadcn`, `@base-ui/react`, `lucide-react`, `react-icons`, `next-themes`                          |
+| Animation          | `motion`                                                                                          |
+| Forms & validation | `react-hook-form`, `zod`, `@hookform/resolvers`                                                   |
+| Auth & database    | `better-auth`, `mongodb`                                                                          |
+| Payments           | Stripe (checkout sessions, confirmation, webhooks)                                                |
+| Images             | ImgBB upload API                                                                                  |
+| Notifications      | `sonner` + shadcn toast primitives                                                                |
+| Tooling            | `eslint`, `eslint-config-next`, `babel-plugin-react-compiler`                                     |
 
 ---
 
 ## 🔗 Links
 
-| Resource | Link |
-|---|---|
-| Live website | https://pizzahub-asgorfaiyaz.vercel.app |
+| Resource          | Link                                        |
+| ----------------- | ------------------------------------------- |
+| Live website      | https://pizzahub-asgorfaiyaz.vercel.app     |
 | Client repository | https://github.com/asgorfaiyaz/pizzahub.git |
-| Server repository | _Add the backend repository URL here_ |
+| Server repository | https://github.com/asgorfaiyaz/pizzahub-api |
 
 ---
 
@@ -78,18 +83,18 @@ PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js
 
 Create a `.env` file in the project root. Use `.env.example` as a starting point.
 
-| Variable | Used for |
-|---|---|
-| `MONGODB_URI` | MongoDB connection for Better Auth sessions/users |
-| `BETTER_AUTH_URL` | Public base URL for Better Auth |
-| `BETTER_AUTH_SECRET` | Secret used to sign auth tokens/cookies |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `SERVER_URL` | Backend API base URL, e.g. `http://localhost:5000/api/v1` |
-| `IMGBB_API_KEY` | API key for image uploads |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key |
-| `STRIPE_SECRET_KEY` | Stripe secret key for checkout sessions |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification (optional if not used locally) |
+| Variable                             | Used for                                                             |
+| ------------------------------------ | -------------------------------------------------------------------- |
+| `MONGODB_URI`                        | MongoDB connection for Better Auth sessions/users                    |
+| `BETTER_AUTH_URL`                    | Public base URL for Better Auth                                      |
+| `BETTER_AUTH_SECRET`                 | Secret used to sign auth tokens/cookies                              |
+| `GOOGLE_CLIENT_ID`                   | Google OAuth client ID                                               |
+| `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret                                           |
+| `SERVER_URL`                         | Backend API base URL, e.g. `http://localhost:5000/api/v1`            |
+| `IMGBB_API_KEY`                      | API key for image uploads                                            |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key                                               |
+| `STRIPE_SECRET_KEY`                  | Stripe secret key for checkout sessions                              |
+| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signature verification (optional if not used locally) |
 
 > Never commit real credentials. `.env` is ignored by Git.
 

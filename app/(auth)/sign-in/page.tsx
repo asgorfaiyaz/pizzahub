@@ -13,7 +13,13 @@ const notices: Record<string, string> = {
   unauthorized: "Your session has expired. Please sign in again.",
 };
 
-function SignInCard({ reason }: { reason?: string }) {
+function SignInCard({
+  reason,
+  animate = true,
+}: {
+  reason?: string;
+  animate?: boolean;
+}) {
   return (
     <AuthCard
       title="Welcome back"
@@ -23,6 +29,7 @@ function SignInCard({ reason }: { reason?: string }) {
           New to PizzaHub? <AuthLink href="/sign-up">Create an account</AuthLink>
         </>
       }
+      animate={animate}
     >
       {reason && notices[reason] ? (
         <div
@@ -54,7 +61,7 @@ export default function SignInPage({
   searchParams: Promise<SignInSearchParams>;
 }) {
   return (
-    <Suspense fallback={<SignInCard />}>
+    <Suspense fallback={<SignInCard animate={false} />}>
       <SignInContent searchParams={searchParams} />
     </Suspense>
   );
