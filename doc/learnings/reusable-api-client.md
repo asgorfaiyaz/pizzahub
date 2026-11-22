@@ -37,9 +37,12 @@ The file starts with `import "server-only"`, so it can only be imported from Ser
 
 ### 4. Consistent, useful errors
 
-A small `getErrorMessage()` helper pulls `message` out of the API response, with a fallback like `API request failed (403).`. Callers don't need to know the backend's response shape just to show a decent error to the user.
+Two small helpers keep error handling predictable:
 
-An empty successful response is also treated as an error instead of silently returning `null` to callers that expect data.
+- `getErrorMessage()` pulls `message` out of the API response, with a fallback like `API request failed (403).`.
+- `getErrorCode()` reads a machine-readable `code` from the response body, so control flow never depends on parsing human-readable text.
+
+Callers don't need to know the backend's response shape just to show a decent error to the user. An empty successful response is also treated as an error instead of silently returning `null` to callers that expect data.
 
 ### 5. Typed responses
 
@@ -60,7 +63,7 @@ export async function getVendorOverview(): Promise<VendorOverview> {
 
 Because every request funnels through here, app-wide behavior is a one-time change:
 
-- Structured error codes such as `ACCOUNT_BLOCKED` can trigger a global redirect.
+- Auth/status handling is centralized: `401` goes to `/unauthorized`, generic `403` goes to `/forbidden`, and `403` + `ACCOUNT_BLOCKED` goes to sign-in with a blocked reason.
 - Logging, retries, timeouts, or cache tags can be added once for all endpoints.
 - Header handling is safe — caller headers are copied into a `Headers` object before the auth header is set, so nothing is overwritten accidentally.
 
@@ -70,15 +73,29 @@ A new endpoint is usually just a few lines in a `queries.ts` or `actions.ts` fil
 
 ## The cool part
 
-A single `403` from any protected endpoint can now do the right thing everywhere:
+Every protected request funnels through the same status handling, so auth failures are consistent app-wide:
 
 ```ts
+if (response.status === 401) {
+  redirect("/unauthorized");
+}
+
 if (response.status === 403 && getErrorCode(payload) === "ACCOUNT_BLOCKED") {
   redirect("/sign-in?reason=blocked");
 }
+
+if (response.status === 403) {
+  redirect("/forbidden");
+}
 ```
 
-That is one check in one file, but it covers the whole application. Paired with `unstable_rethrow()` in the surrounding `catch` blocks (see [Understanding `redirect()` and `unstable_rethrow()`](unstable-rethrow.md)), blocked users are consistently sent to sign-in instead of seeing random error states.
+That is a handful of checks in one file, but it covers the whole application:
+
+- `401` → custom **Unauthorized** page
+- generic `403` → custom **Forbidden** page
+- blocked account → sign-in with an explanation
+
+This also works with `unstable_rethrow()` in the surrounding `catch` blocks (see [Understanding `redirect()` and `unstable_rethrow()`](unstable-rethrow.md)), so a framework redirect is never swallowed by application error handling. The proxy has to agree with these redirects for blocked users, which is covered in [Blocked users and the proxy](blocking-and-proxy.md).
 
 ## Trade-off to remember
 
