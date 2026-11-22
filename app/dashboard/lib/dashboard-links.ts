@@ -26,6 +26,7 @@ export const dashboardLinks: Record<UserRole, DashboardLink[]> = {
     { label: "Customer Orders", href: "/dashboard/vendor/orders", description: "Review orders placed with your shop.", icon: ClipboardList },
     { label: "Subscription", href: "/dashboard/vendor/subscription", description: "View your PizzaHub subscription details.", icon: CreditCard },
     { label: "Profile Settings", href: "/dashboard/vendor/profile-settings", description: "Manage your vendor profile and preferences.", icon: Settings },
+    { label: "Restaurant Info", href: "/dashboard/vendor/restaurant-info", description: "View your restaurant location and opening hours.", icon: Store },
   ],
   customer: [
     { label: "Overview", href: "/dashboard/customer", description: "A quick look at your PizzaHub account.", icon: LayoutDashboard },

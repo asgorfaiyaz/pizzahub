@@ -7,6 +7,7 @@ import {
   useForm,
   useWatch,
   type Control,
+  type FieldErrors,
   type UseFormSetValue,
 } from "react-hook-form";
 import { z } from "zod";
@@ -32,12 +33,37 @@ const signUpSchema = signInSchema.extend({
   name: z.string().min(2, "Name must be at least 2 characters.").max(80),
   role: z.enum(["customer", "vendor"]),
   businessName: z.string().trim().max(120).optional(),
+  restaurantLocation: z.string().trim().max(160).optional(),
+  restaurantOpeningTime: z.string().optional(),
+  restaurantClosingTime: z.string().optional(),
+  restaurantPhone: z.string().trim().max(30).optional(),
 }).superRefine((values, context) => {
   if (values.role === "vendor" && !values.businessName?.trim()) {
     context.addIssue({
       code: "custom",
       path: ["businessName"],
       message: "Business name is required for vendor accounts.",
+    });
+  }
+  if (values.role === "vendor" && !values.restaurantLocation?.trim()) {
+    context.addIssue({
+      code: "custom",
+      path: ["restaurantLocation"],
+      message: "Restaurant location is required for vendor accounts.",
+    });
+  }
+  if (values.role === "vendor" && !values.restaurantOpeningTime?.trim()) {
+    context.addIssue({
+      code: "custom",
+      path: ["restaurantOpeningTime"],
+      message: "Opening time is required for vendor accounts.",
+    });
+  }
+  if (values.role === "vendor" && !values.restaurantClosingTime?.trim()) {
+    context.addIssue({
+      code: "custom",
+      path: ["restaurantClosingTime"],
+      message: "Closing time is required for vendor accounts.",
     });
   }
 });
@@ -48,6 +74,10 @@ type AuthValues = {
   password: string;
   role?: "customer" | "vendor";
   businessName?: string;
+  restaurantLocation?: string;
+  restaurantOpeningTime?: string;
+  restaurantClosingTime?: string;
+  restaurantPhone?: string;
 };
 
 export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
@@ -62,6 +92,10 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
       password: "",
       role: "customer",
       businessName: "",
+      restaurantLocation: "",
+      restaurantOpeningTime: "",
+      restaurantClosingTime: "",
+      restaurantPhone: "",
     },
   });
 
@@ -74,6 +108,10 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             password: values.password,
             role: values.role ?? "customer",
             businessName: values.businessName?.trim() || undefined,
+            restaurantLocation: values.restaurantLocation?.trim() || undefined,
+            restaurantOpeningTime: values.restaurantOpeningTime || undefined,
+            restaurantClosingTime: values.restaurantClosingTime || undefined,
+            restaurantPhone: values.restaurantPhone?.trim() || undefined,
             callbackURL: "/sign-in",
           })
         : await authClient.signIn.email({
@@ -171,10 +209,10 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             <RolePicker control={form.control} setValue={form.setValue} />
           ) : null}
           {isSignUp ? (
-            <BusinessNameField
+            <VendorDetailsFields
               control={form.control}
               register={form.register}
-              error={form.formState.errors.businessName}
+              errors={form.formState.errors}
             />
           ) : null}
           <Field data-invalid={!!form.formState.errors.email}>
@@ -255,31 +293,81 @@ const RolePicker = function RolePicker({
   );
 };
 
-const BusinessNameField = function BusinessNameField({
+const VendorDetailsFields = function VendorDetailsFields({
   control,
   register,
-  error,
+  errors,
 }: {
   control: Control<AuthValues>;
   register: ReturnType<typeof useForm<AuthValues>>["register"];
-  error?: { message?: string };
+  errors: FieldErrors<AuthValues>;
 }) {
   const selectedRole = useWatch({ control, name: "role" });
 
   if (selectedRole !== "vendor") return null;
 
+  const fields = [
+    {
+      name: "businessName" as const,
+      label: "Restaurant name",
+      placeholder: "Alex's Pizza",
+      type: "text",
+      autoComplete: "organization",
+    },
+    {
+      name: "restaurantLocation" as const,
+      label: "Restaurant location",
+      placeholder: "Downtown, Sylhet",
+      type: "text",
+      autoComplete: "address-level2",
+    },
+    {
+      name: "restaurantOpeningTime" as const,
+      label: "Opening time",
+      placeholder: "",
+      type: "time",
+      autoComplete: "off",
+    },
+    {
+      name: "restaurantClosingTime" as const,
+      label: "Closing time",
+      placeholder: "",
+      type: "time",
+      autoComplete: "off",
+    },
+    {
+      name: "restaurantPhone" as const,
+      label: "Restaurant phone (optional)",
+      placeholder: "+1 555 000 1234",
+      type: "tel",
+      autoComplete: "tel",
+    },
+  ];
+
   return (
-    <Field data-invalid={!!error}>
-      <FieldLabel htmlFor="businessName">Business name</FieldLabel>
-      <Input
-        id="businessName"
-        autoComplete="organization"
-        placeholder="Alex's Pizza"
-        aria-invalid={!!error}
-        {...register("businessName")}
-      />
-      <FieldError errors={[error]} />
-    </Field>
+    <div className="grid gap-4 rounded-xl border bg-muted/30 p-4 sm:grid-cols-2">
+      <p className="text-xs font-medium text-muted-foreground sm:col-span-2">
+        Restaurant details — these appear on your vendor dashboard.
+      </p>
+      {fields.map((field) => {
+        const error = errors[field.name];
+
+        return (
+          <Field key={field.name} data-invalid={!!error}>
+            <FieldLabel htmlFor={field.name}>{field.label}</FieldLabel>
+            <Input
+              id={field.name}
+              type={field.type}
+              autoComplete={field.autoComplete}
+              placeholder={field.placeholder}
+              aria-invalid={!!error}
+              {...register(field.name)}
+            />
+            <FieldError errors={[error]} />
+          </Field>
+        );
+      })}
+    </div>
   );
 };
 

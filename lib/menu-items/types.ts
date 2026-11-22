@@ -32,7 +32,12 @@ export type VendorInfo = {
   _id: string;
   name: string;
   email?: string;
+  image?: string | null;
   businessName?: string;
+  restaurantLocation?: string;
+  restaurantOpeningTime?: string;
+  restaurantClosingTime?: string;
+  restaurantPhone?: string;
 };
 
 export type MenuItem = CreateMenuItemInput & {

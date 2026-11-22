@@ -35,6 +35,26 @@ export const auth = betterAuth({
         required: false,
         input: true,
       },
+      restaurantLocation: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      restaurantOpeningTime: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      restaurantClosingTime: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      restaurantPhone: {
+        type: "string",
+        required: false,
+        input: true,
+      },
       subscriptionPlan: {
         type: ["free", "premium"],
         required: false,
