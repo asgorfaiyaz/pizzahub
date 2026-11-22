@@ -14,7 +14,7 @@ export async function uploadImageToImgBB(file: File) {
   const apiKey = process.env.IMGBB_API_KEY;
 
   if (!apiKey) {
-    throw new Error("IMGBB_API_KEY is not configured.");
+    throw new Error("Image upload failed: IMGBB_API_KEY is not configured.");
   }
 
   const formData = new FormData();
@@ -31,7 +31,7 @@ export async function uploadImageToImgBB(file: File) {
 
   if (!response.ok || !payload?.success || !payload.data?.url) {
     throw new Error(
-      payload?.error?.message ?? `ImgBB upload failed (${response.status}).`,
+      `Image upload failed: ${payload?.error?.message ?? `ImgBB upload failed (${response.status}).`}`,
     );
   }
 

@@ -115,12 +115,21 @@ export function MenuItemForm({
         router.refresh();
       }
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to save the menu item. Please try again.";
+      const isUploadError = message
+        .toLowerCase()
+        .startsWith("image upload failed");
+
       toast.add({
-        title: isUpdate ? "Update failed" : "Creation failed",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Unable to save the menu item. Please try again.",
+        title: isUploadError
+          ? "Image upload failed"
+          : isUpdate
+            ? "Update failed"
+            : "Creation failed",
+        description: message,
         type: "error",
       });
     }
