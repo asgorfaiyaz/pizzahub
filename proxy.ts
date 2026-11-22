@@ -21,6 +21,19 @@ export async function proxy(request: NextRequest) {
   }
 
   const session = await auth.api.getSession({ headers: request.headers });
+  const isBlocked = Boolean(session?.user.isBlocked);
+
+  if (isBlocked) {
+    // Let blocked users stay on the sign-in page so they can see why they
+    // were redirected instead of bouncing back to the dashboard.
+    if (isAuthRoute) {
+      return NextResponse.next();
+    }
+
+    const blockedUrl = new URL("/sign-in", request.url);
+    blockedUrl.searchParams.set("reason", "blocked");
+    return NextResponse.redirect(blockedUrl);
+  }
 
   if (!isAuthRoute && !session) {
     const signInUrl = new URL("/sign-in", request.url);
