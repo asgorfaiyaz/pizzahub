@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 import {
@@ -8,7 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { USER_ROLES, type UserRole } from "@/lib/roles";
-import { getServerSession } from "@/lib/server-session";
+import { requireActiveSession } from "@/lib/server-session";
 export const instant = false;
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -20,11 +19,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 }
 
 async function DashboardContent({ children }: { children: ReactNode }) {
-  const session = await getServerSession();
-
-  if (!session) redirect("/sign-in");
-
-  if (session.user.isBlocked) redirect("/sign-in?reason=blocked");
+  const session = await requireActiveSession();
 
   const sessionRole = session.user.role;
   const role: UserRole = USER_ROLES.includes(sessionRole as UserRole)

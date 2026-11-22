@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { getServerSession } from "@/lib/server-session";
+import { requireActiveSession } from "@/lib/server-session";
 import { ROLE_LABELS } from "@/lib/roles";
 import { ThemeModeToggle } from "@/components/theme-mode-toggle";
 import { ProfileSettingsForm } from "@/components/profile/profile-settings-form";
@@ -44,12 +44,8 @@ function ProfileInfoRow({
 }
 
 async function ProfileSettingsContent() {
-  const session = await getServerSession();
-  const user = session?.user;
-
-  if (!user) {
-    return null;
-  }
+  const session = await requireActiveSession();
+  const user = session.user;
 
   const role = user.role ?? "customer";
   const isVendor = role === "vendor";
