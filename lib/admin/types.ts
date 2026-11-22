@@ -5,6 +5,7 @@ export type User = {
   role: string;
   phone?: string;
   createdAt: string;
+  isBlocked?: boolean;
 };
 
 export type UsersPagination = {

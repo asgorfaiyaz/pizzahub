@@ -147,12 +147,14 @@ export function UserDetailsButton({ id, name }: { id: string; name: string }) {
                         {user.email}
                       </p>
                     </div>
-                    <Badge
-                      variant={roleVariant(user.role)}
-                      className="ml-auto shrink-0"
-                    >
-                      {ROLE_LABELS[user.role as UserRole] ?? user.role}
-                    </Badge>
+                    <div className="ml-auto flex shrink-0 items-center gap-1.5">
+                      {user.isBlocked ? (
+                        <Badge variant="destructive">Blocked</Badge>
+                      ) : null}
+                      <Badge variant={roleVariant(user.role)}>
+                        {ROLE_LABELS[user.role as UserRole] ?? user.role}
+                      </Badge>
+                    </div>
                   </div>
 
                   <div className="mt-5 grid gap-3 rounded-xl border bg-muted/30 p-4">
