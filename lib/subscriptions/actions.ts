@@ -1,5 +1,7 @@
 "use server";
 
+import { unstable_rethrow } from "next/navigation";
+
 import { serverApiFetch } from "@/lib/server-api";
 import type { CheckoutSessionResponse } from "./types";
 
@@ -28,6 +30,8 @@ export async function createCheckoutSession(): Promise<CheckoutSessionResult> {
 
     return { ok: true, url: response.data.url };
   } catch (error) {
+    unstable_rethrow(error);
+
     return {
       ok: false,
       message:

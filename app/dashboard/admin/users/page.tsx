@@ -1,11 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import { SearchXIcon, UsersRoundIcon } from "lucide-react";
 
 import { dashboardLinks } from "@/app/dashboard/lib/dashboard-links";
 import { getUsers } from "@/lib/admin/queries";
 import type { User } from "@/lib/admin/types";
 import { ROLE_LABELS, type UserRole } from "@/lib/roles";
+import { getServerSession } from "@/lib/server-session";
+import { UserBlockButton } from "@/components/admin/user-block-button";
 import { UserDetailsButton } from "@/components/admin/user-details-button";
 import { UsersFilters } from "@/components/admin/users-filters";
 import { UsersPagination } from "@/components/admin/users-pagination";
@@ -82,7 +85,10 @@ function UsersSkeleton() {
               <Skeleton className="h-3 w-48" />
             </div>
             <Skeleton className="h-5 w-20 rounded-full" />
-            <Skeleton className="size-7 rounded-lg" />
+            <div className="flex gap-2">
+              <Skeleton className="size-7 rounded-lg" />
+              <Skeleton className="size-7 rounded-lg" />
+            </div>
           </div>
         ))}
       </Card>
@@ -136,7 +142,12 @@ async function UsersContent({
 }: {
   searchParams: Promise<AdminUsersSearchParams>;
 }) {
-  const params = await searchParams;
+  const [params, session] = await Promise.all([
+    searchParams,
+    getServerSession(),
+  ]);
+
+  const currentUserId = session?.user.id;
 
   const search = (first(params.search) ?? "").trim();
   const role = first(params.role) ?? "";
@@ -154,7 +165,8 @@ async function UsersContent({
     });
     users = result.users;
     pagination = result.pagination;
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return <ErrorState />;
   }
 
@@ -224,7 +236,15 @@ async function UsersContent({
                       {formatDate(user.createdAt)}
                     </TableCell>
                     <TableCell className="text-right">
-                      <UserDetailsButton id={user._id} name={user.name} />
+                      <div className="flex items-center justify-end gap-2">
+                        <UserBlockButton
+                          id={user._id}
+                          name={user.name}
+                          initialBlocked={Boolean(user.isBlocked)}
+                          isSelf={user._id === currentUserId}
+                        />
+                        <UserDetailsButton id={user._id} name={user.name} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

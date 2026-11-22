@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { unstable_rethrow } from "next/navigation";
 import { Check } from "lucide-react";
 import { getVendorSubscription } from "@/lib/subscriptions/queries";
 import type { VendorSubscriptionStatus } from "@/lib/subscriptions/types";
@@ -132,7 +133,8 @@ async function SubscriptionContent() {
 
   try {
     status = await getVendorSubscription();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return <SubscriptionError />;
   }
 

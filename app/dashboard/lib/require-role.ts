@@ -9,6 +9,10 @@ export async function requireRole(requiredRole: UserRole) {
     redirect("/sign-in");
   }
 
+  if (session.user.isBlocked) {
+    redirect("/sign-in?reason=blocked");
+  }
+
   const role = session.user.role;
   const currentRole = USER_ROLES.includes(role as UserRole)
     ? (role as UserRole)

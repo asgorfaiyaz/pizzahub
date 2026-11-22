@@ -24,6 +24,8 @@ async function DashboardContent({ children }: { children: ReactNode }) {
 
   if (!session) redirect("/sign-in");
 
+  if (session.user.isBlocked) redirect("/sign-in?reason=blocked");
+
   const sessionRole = session.user.role;
   const role: UserRole = USER_ROLES.includes(sessionRole as UserRole)
     ? (sessionRole as UserRole)

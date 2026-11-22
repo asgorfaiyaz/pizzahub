@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { unstable_rethrow } from "next/navigation";
 import {
   CircleCheck,
   ClipboardCheck,
@@ -190,7 +191,8 @@ async function OverviewContentLoader() {
 
   try {
     data = await getVendorOverview();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return <ErrorState />;
   }
 

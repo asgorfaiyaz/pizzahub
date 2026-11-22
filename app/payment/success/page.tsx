@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 import { Check, Clock3 } from "lucide-react";
 
 import {
@@ -243,7 +244,8 @@ async function SuccessContent({
   if (sessionId) {
     try {
       confirmation = await getPaymentConfirmation(sessionId);
-    } catch {
+    } catch (error) {
+      unstable_rethrow(error);
       return (
         <ErrorState
           title="Unable to confirm your payment"
@@ -257,7 +259,8 @@ async function SuccessContent({
 
   try {
     status = await getVendorSubscription();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     if (!confirmation) {
       return (
         <ErrorState

@@ -1,4 +1,5 @@
 import "server-only";
+import { redirect } from "next/navigation";
 import { getToken } from "@/lib/server-session";
 
 export type ServerApiAuth = "required" | "optional" | "none";
@@ -16,6 +17,15 @@ function getErrorMessage(payload: unknown, fallback: string) {
   }
 
   return fallback;
+}
+
+function getErrorCode(payload: unknown) {
+  if (payload && typeof payload === "object" && "code" in payload) {
+    const code = payload.code;
+    if (typeof code === "string") return code;
+  }
+
+  return null;
 }
 
 export async function serverApiFetch<T>(
@@ -54,9 +64,16 @@ export async function serverApiFetch<T>(
   const payload = (await response.json().catch(() => null)) as T | null;
 
   if (!response.ok) {
-    throw new Error(
-      getErrorMessage(payload, `API request failed (${response.status}).`),
+    const message = getErrorMessage(
+      payload,
+      `API request failed (${response.status}).`,
     );
+
+    if (response.status === 403 && getErrorCode(payload) === "ACCOUNT_BLOCKED") {
+      redirect("/sign-in?reason=blocked");
+    }
+
+    throw new Error(message);
   }
 
   if (payload === null) {
