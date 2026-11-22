@@ -10,13 +10,15 @@ import { authClient } from "@/lib/auth-client";
 import { useAuthSession } from "@/hooks/use-auth-session";
 import { MobileNav } from "./mobile-nav";
 import { NavLink } from "./nav-link";
-import { authenticatedNavItems, publicNavItems } from "./nav-config";
+import { getAuthenticatedNavItems, publicNavItems } from "./nav-config";
 import { ProfileMenu } from "./profile-menu";
 
 export function Navbar() {
   const router = useRouter();
   const { user, isAuthenticated, authState } = useAuthSession();
-  const items = isAuthenticated ? authenticatedNavItems : publicNavItems;
+  const items = isAuthenticated
+    ? getAuthenticatedNavItems(user?.role)
+    : publicNavItems;
 
   async function handleLogout() {
     try {

@@ -1,4 +1,4 @@
-import type { UserRole } from "@/lib/roles";
+import { USER_ROLES, type UserRole } from "@/lib/roles";
 
 export type NavItem = {
   label: string;
@@ -17,7 +17,15 @@ export const publicNavItems: NavItem[] = [
   { label: "Browse Menu", href: "/browse-menu" },
 ];
 
-export const authenticatedNavItems: NavItem[] = [
-  ...publicNavItems,
-  { label: "Dashboard", href: "/dashboard" },
-];
+export function getDashboardHref(role?: UserRole) {
+  const safeRole = role && USER_ROLES.includes(role) ? role : "customer";
+
+  return `/dashboard/${safeRole}`;
+}
+
+export function getAuthenticatedNavItems(role?: UserRole): NavItem[] {
+  return [
+    ...publicNavItems,
+    { label: "Dashboard", href: getDashboardHref(role) },
+  ];
+}

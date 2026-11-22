@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ROLE_LABELS } from "@/lib/roles";
-import type { NavUser } from "./nav-config";
+import { getDashboardHref, type NavUser } from "./nav-config";
 
 type ProfileMenuProps = {
   user: NavUser;
@@ -67,7 +67,7 @@ export function ProfileMenu({ user, onLogout }: ProfileMenuProps) {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem render={<Link href="/dashboard" />}>
+        <DropdownMenuItem render={<Link href={getDashboardHref(user.role)} />}>
           <LayoutDashboard aria-hidden="true" />
           Dashboard
         </DropdownMenuItem>

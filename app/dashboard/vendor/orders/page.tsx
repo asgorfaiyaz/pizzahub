@@ -34,7 +34,6 @@ export default function VendorOrdersPage() {
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
       <header className="border-b pb-6">
-        <p className="text-sm font-medium text-primary">Vendor Orders</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">
           Customer Orders
         </h1>

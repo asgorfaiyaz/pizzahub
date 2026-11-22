@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronsUpDown, LogOut, Pizza, Settings } from "lucide-react";
+import { ChevronsUpDown, Home, LogOut, Pizza, Settings } from "lucide-react";
 
 import {
   dashboardLinks,
@@ -124,6 +124,16 @@ export function DashboardSidebar({ role, user }: DashboardSidebarProps) {
           <SidebarGroupLabel>{roleMeta.label}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  render={<Link href="/" />}
+                  tooltip="Home"
+                >
+                  <Home aria-hidden="true" />
+                  <span>Home</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
               {links.map((item) => {
                 const active =
                   item.href === `/dashboard/${role}`
