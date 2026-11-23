@@ -1,7 +1,15 @@
+import { setServers } from "node:dns/promises";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { USER_ROLES } from "@/lib/roles";
+
+// Opt-in only: some machines cannot resolve MongoDB SRV records with their
+// default resolver. Vercel resolves them natively, so this is never enabled in production.
+// Set DNS_OVERRIDE=1 in a local .env when needed.
+if (process.env.DNS_OVERRIDE === "1") {
+  setServers(["1.1.1.1", "8.8.8.8"]);
+}
 
 const rawUri = process.env.MONGODB_URI;
 

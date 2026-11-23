@@ -12,8 +12,23 @@ import {
 import { dashboardLinks } from "@/app/dashboard/lib/dashboard-links";
 import { getVendorOverview } from "@/lib/vendor/queries";
 import type { VendorOverview } from "@/lib/vendor/types";
+import {
+  OverviewBarChart,
+  OverviewDonutChart,
+} from "@/components/charts/overview-charts";
+import type { ChartConfig } from "@/components/ui/chart";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const menuChartConfig = {
+  active: { label: "Active", color: "var(--primary)" },
+  inactive: { label: "Inactive", color: "var(--muted-foreground)" },
+} satisfies ChartConfig;
+
+const orderChartConfig = {
+  pending: { label: "Pending", color: "var(--warning)" },
+  accepted: { label: "Accepted", color: "var(--success)" },
+} satisfies ChartConfig;
 
 function PageHeader({ showPremium }: { showPremium: boolean }) {
   return (
@@ -181,6 +196,39 @@ function OverviewContent({ data }: { data: VendorOverview }) {
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} premium={isPremium} />
         ))}
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <OverviewDonutChart
+          title="Menu composition"
+          description="Active vs inactive items"
+          data={[
+            { key: "active", label: "Active", value: data.activeMenuItems },
+            {
+              key: "inactive",
+              label: "Inactive",
+              value: Math.max(0, data.totalMenuItems - data.activeMenuItems),
+            },
+          ]}
+          config={menuChartConfig}
+        />
+        <OverviewBarChart
+          title="Order status"
+          description="Pending vs accepted orders"
+          data={[
+            {
+              key: "pending",
+              label: "Pending",
+              value: data.pendingOrders,
+            },
+            {
+              key: "accepted",
+              label: "Accepted",
+              value: data.acceptedOrders,
+            },
+          ]}
+          config={orderChartConfig}
+        />
       </div>
     </>
   );

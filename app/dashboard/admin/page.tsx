@@ -14,9 +14,25 @@ import {
 import { dashboardLinks } from "@/app/dashboard/lib/dashboard-links";
 import { getAdminOverview } from "@/lib/admin/queries";
 import type { AdminOverview } from "@/lib/admin/types";
+import {
+  OverviewBarChart,
+  OverviewDonutChart,
+} from "@/components/charts/overview-charts";
 import { buttonVariants } from "@/components/ui/button";
+import type { ChartConfig } from "@/components/ui/chart";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const rolesChartConfig = {
+  customers: { label: "Customers", color: "var(--primary)" },
+  vendors: { label: "Vendors", color: "var(--secondary)" },
+  admins: { label: "Admins", color: "var(--muted-foreground)" },
+} satisfies ChartConfig;
+
+const menuChartConfig = {
+  approved: { label: "Approved", color: "var(--success)" },
+  pending: { label: "Pending", color: "var(--warning)" },
+} satisfies ChartConfig;
 
 function OverviewSkeleton() {
   return (
@@ -111,6 +127,52 @@ function OverviewContent({ data }: { data: AdminOverview }) {
         {stats.map((stat) => (
           <StatCard key={stat.label} {...stat} />
         ))}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <OverviewDonutChart
+          title="User roles"
+          description="How the platform audience is split"
+          data={[
+            {
+              key: "customers",
+              label: "Customers",
+              value: data.totalCustomers,
+            },
+            { key: "vendors", label: "Vendors", value: data.totalVendors },
+            {
+              key: "admins",
+              label: "Admins",
+              value: Math.max(
+                0,
+                data.totalRegisteredUsers -
+                  data.totalCustomers -
+                  data.totalVendors,
+              ),
+            },
+          ]}
+          config={rolesChartConfig}
+        />
+        <OverviewBarChart
+          title="Menu moderation"
+          description="Approved vs pending items"
+          data={[
+            {
+              key: "approved",
+              label: "Approved",
+              value: Math.max(
+                0,
+                data.totalMenuItems - data.pendingMenuItems,
+              ),
+            },
+            {
+              key: "pending",
+              label: "Pending",
+              value: data.pendingMenuItems,
+            },
+          ]}
+          config={menuChartConfig}
+        />
       </div>
 
       <div className="flex flex-wrap gap-2">
