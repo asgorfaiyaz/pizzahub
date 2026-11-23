@@ -1,147 +1,187 @@
-# PizzaHub 🍕
-
+# 🍕 PizzaHub
+ 
 **Discover local pizza shops, browse real menus, and order food that arrives hot.**
-
-PizzaHub is a full-stack pizza ordering and delivery platform built with Next.js 16. Customers explore neighborhood kitchens, vendors manage menus and orders, and admins keep the platform healthy. It combines role-based dashboards, Stripe payments, image uploads, and a warm, animated UI.
-
-[Live website](https://pizzahub-asgorfaiyaz.vercel.app) · [Client repository](https://github.com/asgorfaiyaz/pizzahub.git)
-
+ 
+PizzaHub is a full-stack, multi-vendor pizza ordering platform. Customers explore neighborhood kitchens and place orders, vendors manage their menus and incoming orders, and admins moderate the platform. It features role-based dashboards, Stripe payments, and a responsive, animated UI with dark mode.
+ 
 ---
-
-## ✨ Features
-
-### For everyone
-
-- **Homepage** with a pizza hero, approved featured items, category browsing, and subtle Motion animations
-- **Browse menu** with live search, status/category/location filters, sorting, and pagination
-- **Item details** with image gallery, restaurant/vendor info, related items, and ordering
-- **Authentication** with email/password and Google sign-in, customer/vendor roles at sign-up
-- **Custom error pages** for 404, unauthorized, forbidden, and unexpected errors
-- **Dark mode** and a responsive, pizza-friendly design system
-
-### Customers
-
-- Personal overview with order statistics
-- Order history with detailed delivery info, status, and cancellation for pending orders
-- Checkout demo flow and Stripe-backed premium upgrade success/cancel pages
-- Profile settings with name and avatar updates
-
-### Vendors
-
-- Overview with live menu/order/subscription stats
-- Menu item management: create, edit, delete, availability, and ImgBB image uploads
-- Customer order management with status updates
-- Subscription page with usage limits and Stripe checkout for Premium
-- Restaurant info page with editable location, hours, and phone
-
-### Admins
-
-- Platform overview: users, vendors, customers, menu items, pending items, transactions
-- User management with search, role filtering, pagination, block/unblock, and detail dialogs
-- Menu moderation: approve, reject, set pending/inactive, and delete items
-- Transaction history with pagination
-
-### Security & architecture
-
-- Edge proxy plus layout-level role guards (`customer`, `vendor`, `admin`)
-- Blocked accounts are redirected with a clear reason; sessions are revoked by the backend
-- Shared server-only API client (`serverApiFetch`) for auth headers, parsing, and error handling
-- API `401` → `/unauthorized`, `403` → `/forbidden`, blocked accounts → sign-in notice
-- Protected server actions for all mutations; tokens never reach the browser
-
----
-
-## 🛠 Tech stack
-
-| Area               | Packages                                                                                          |
-| ------------------ | ------------------------------------------------------------------------------------------------- |
-| Framework          | `next@16.4.6` (App Router, Cache Components, Turbopack), `react@19.3.0`, `react-dom@19.3.0`       |
-| Language           | `typescript@5`                                                                                    |
-| Styling            | `tailwindcss@4.3.3`, `@tailwindcss/turbopack`, `tw-animate-css`, `class-variance-authority`, `cn` |
-| UI components      | `shadcn`, `@base-ui/react`, `lucide-react`, `react-icons`, `next-themes`                          |
-| Animation          | `motion`                                                                                          |
-| Forms & validation | `react-hook-form`, `zod`, `@hookform/resolvers`                                                   |
-| Auth & database    | `better-auth`, `mongodb`                                                                          |
-| Payments           | Stripe (checkout sessions, confirmation, webhooks)                                                |
-| Images             | ImgBB upload API                                                                                  |
-| Notifications      | `sonner` + shadcn toast primitives                                                                |
-| Tooling            | `eslint`, `eslint-config-next`, `babel-plugin-react-compiler`                                     |
-
----
-
+ 
 ## 🔗 Links
-
+ 
 | Resource          | Link                                        |
 | ----------------- | ------------------------------------------- |
 | Live website      | https://pizzahub-asgorfaiyaz.vercel.app     |
-| Client repository | https://github.com/asgorfaiyaz/pizzahub.git |
+| Client repository | https://github.com/asgorfaiyaz/pizzahub    |
 | Server repository | https://github.com/asgorfaiyaz/pizzahub-api |
-
+ 
 ---
-
-## ⚙️ Environment variables
-
-Create a `.env` file in the project root. Use `.env.example` as a starting point.
-
-| Variable                             | Used for                                                             |
-| ------------------------------------ | -------------------------------------------------------------------- |
-| `MONGODB_URI`                        | MongoDB connection for Better Auth sessions/users                    |
-| `BETTER_AUTH_URL`                    | Public base URL for Better Auth                                      |
-| `BETTER_AUTH_SECRET`                 | Secret used to sign auth tokens/cookies                              |
-| `GOOGLE_CLIENT_ID`                   | Google OAuth client ID                                               |
-| `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret                                           |
-| `SERVER_URL`                         | Backend API base URL, e.g. `http://localhost:5000/api/v1`            |
-| `IMGBB_API_KEY`                      | API key for image uploads                                            |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key                                               |
-| `STRIPE_SECRET_KEY`                  | Stripe secret key for checkout sessions                              |
-| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signature verification (optional if not used locally) |
-
-> Never commit real credentials. `.env` is ignored by Git.
-
+ 
+## ⭐ Key Highlights
+ 
+- **Role-based authentication & authorization:** Better Auth (email/password + Google) with `customer`, `vendor`, and `admin` roles, enforced at the edge proxy, in layout guards, and in backend middleware (`requireVendor`, `requireAdmin`).
+- **Secure Stripe webhooks:** Server-side Checkout sessions with HMAC-SHA256 signature verification on the raw payload and idempotency checks, so upgrades happen only through verified webhooks, never through frontend trust.
+- **Advanced server-side search, filtering, sorting & pagination:** Case-insensitive search, category/location/status filters, sorting, and pagination, all handled on the server with Zod-validated query parameters.
+- **MongoDB aggregation pipelines:** Heavy use of `$match`, `$lookup`, `$unwind`, `$project`, `$sort`, `$skip`/`$limit`, and more to join menu items with vendor profiles and compute dashboard stats efficiently in a single query.
 ---
-
+ 
+## ✨ Features
+ 
+**Everyone**
+- Homepage with featured items and category browsing
+- Menu browsing with live search, filters, sorting, and pagination
+- Item details with image gallery, vendor info, and related items
+- Custom 404, unauthorized, forbidden, and error pages
+- Dark mode and responsive design
+**Customers**
+- Overview with order statistics
+- Order history, delivery details, and cancellation of pending orders
+- Profile settings (name and avatar)
+**Vendors**
+- Overview with live menu, order, and subscription stats
+- Menu management: create, edit, delete, availability, image uploads (ImgBB)
+- Accept or reject customer orders
+- Free plan (3 active items) with Stripe Checkout upgrade to Premium
+- Editable restaurant info (location, hours, phone)
+**Admins**
+- Platform overview: users, vendors, customers, items, transactions
+- User management: search, role filter, block/unblock with instant session revocation
+- Menu moderation: approve, reject, deactivate, delete
+- Read-only transaction ledger
+---
+ 
+## 🛠 Technology Stack
+ 
+### Client (Next.js)
+ 
+| Area               | Packages                                                                 |
+| ------------------ | ------------------------------------------------------------------------ |
+| Framework          | `next`, `react`, `react-dom`                                             |
+| Language           | `typescript`                                                             |
+| Styling            | `tailwindcss`, `tw-animate-css`, `class-variance-authority`              |
+| UI components      | `shadcn`, `@base-ui/react`, `lucide-react`, `react-icons`, `next-themes` |
+| Animation          | `motion`                                                                 |
+| Forms & validation | `react-hook-form`, `zod`, `@hookform/resolvers`                          |
+| Auth & database    | `better-auth`, `mongodb`                                                 |
+| Notifications      | `sonner`                                                                 |
+| Tooling            | `eslint`, `eslint-config-next`, `babel-plugin-react-compiler`            |
+ 
+### Server (Express)
+ 
+| Area        | Packages / Tools                   |
+| ----------- | ---------------------------------- |
+| Runtime     | Node.js (ES Modules)               |
+| Language    | `typescript`                       |
+| Framework   | `express`                          |
+| Database    | `mongodb` (native driver)          |
+| Validation  | `zod`                              |
+| Payments    | `stripe`                           |
+| Security    | `cors`                             |
+| Environment | `dotenv`                           |
+| Dev tooling | `tsx`                              |
+ 
+---
+ 
 ## 🚀 Installation
-
+ 
+**Prerequisites:** Node.js v18+, a MongoDB instance (local or Atlas), and optionally the [Stripe CLI](https://docs.stripe.com/stripe-cli) for local webhooks.
+ 
+### 1. Server
+ 
 ```bash
-# 1. Clone the client repository
+git clone https://github.com/asgorfaiyaz/pizzahub-api.git
+cd pizzahub-api
+npm install
+cp .env.example .env   # fill in the variables below
+```
+ 
+### 2. Client
+ 
+```bash
 git clone https://github.com/asgorfaiyaz/pizzahub.git
 cd pizzahub
-
-# 2. Install dependencies
 npm install
-
-# 3. Create your environment file
-cp .env.example .env
-# Fill in every variable listed above
-
-# 4. Make sure the backend is running and SERVER_URL points to it
+cp .env.example .env   # fill in the variables below
 ```
-
+ 
 ---
-
-## ▶️ Run locally
-
+ 
+## ⚙️ Environment Variables
+ 
+> Never commit real credentials. `.env` is ignored by Git.
+ 
+### Client (`.env`)
+ 
+| Variable                             | Used for                                          |
+| ------------------------------------ | ------------------------------------------------- |
+| `MONGODB_URI`                        | MongoDB connection for Better Auth                |
+| `BETTER_AUTH_URL`                    | Public base URL for Better Auth                   |
+| `BETTER_AUTH_SECRET`                 | Secret for signing auth tokens/cookies            |
+| `GOOGLE_CLIENT_ID`                   | Google OAuth client ID                            |
+| `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret                        |
+| `SERVER_URL`                         | Backend API base URL (e.g. `http://localhost:5000/api/v1`) |
+| `IMGBB_API_KEY`                      | Image upload API key                              |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key                            |
+| `STRIPE_SECRET_KEY`                  | Stripe secret key                                 |
+| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook signature secret (optional locally) |
+ 
+### Server (`.env`)
+ 
+| Variable                | Used for                                      |
+| ----------------------- | --------------------------------------------- |
+| `PORT`                  | Port the Express server listens on (`5000`)   |
+| `MONGODB_URI`           | MongoDB connection string                     |
+| `MONGODB_DB`            | MongoDB database name (`pizzahub`)            |
+| `CLIENT_URL`            | Frontend URL for CORS and redirects           |
+| `STRIPE_SECRET_KEY`     | Stripe secret key                             |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (`whsec_...`)   |
+ 
+---
+ 
+## ▶️ Run Locally
+ 
+Start the **server first**, then the client.
+ 
+### Server (http://localhost:5000)
+ 
 ```bash
-# Development server (http://localhost:3000)
-npm run dev
-
-# Production build
-npm run build
-
-# Start the production build
-npm start
-
-# Lint
-npm run lint
+npm run dev          # development with hot reload
+npm run build        # compile TypeScript
+npm start            # run the production build
 ```
-
-The backend must be reachable at `SERVER_URL` for menu items, orders, overviews, transactions, and subscription endpoints.
-
+ 
+Health check: `curl http://localhost:5000/health`
+ 
+To test Stripe webhooks locally:
+ 
+```bash
+stripe login
+stripe listen --forward-to localhost:5000/api/v1/webhooks/stripe
+```
+ 
+Copy the printed `whsec_...` into `STRIPE_WEBHOOK_SECRET`.
+ 
+### Client (http://localhost:3000)
+ 
+```bash
+npm run dev          # development server
+npm run build        # production build
+npm start            # run the production build
+npm run lint         # lint
+```
+ 
+The backend must be reachable at `SERVER_URL` for menu items, orders, dashboards, and subscriptions to work.
+ 
 ---
-
-## 📚 Key learnings
-
-- **Reusable API client:** `serverApiFetch` centralizes API URLs, authentication, response parsing, and error handling for public and protected requests. See [Why `serverApiFetch` is worth having](doc/learnings/reusable-api-client.md).
-- **Secure image uploads:** Menu images are validated in the form, uploaded to ImgBB through a server action, and sent to the backend as image URLs without exposing the API key.
-- **Framework errors vs. app errors:** `redirect()` throws an internal signal that a `try/catch` can swallow; `unstable_rethrow()` lets Next.js handle it while ordinary API errors still reach your handler. See [Understanding `redirect()` and `unstable_rethrow()`](doc/learnings/unstable-rethrow.md).
-- **Blocked users and the proxy:** the edge proxy and server guards must agree on blocked accounts or they create a redirect loop. See [Blocked users and the proxy](doc/learnings/blocking-and-proxy.md).
+ 
+## 📡 API Overview
+ 
+| Role     | Example endpoints                                                                 |
+| -------- | --------------------------------------------------------------------------------- |
+| Public   | `GET /menu-items`, `GET /menu-items/:id`, `GET /menu-items/locations`              |
+| Customer | `GET/POST /customers/orders`, `PATCH /customers/orders/:id/cancel`                 |
+| Vendor   | `/vendors/menu-items`, `/vendors/orders`, `/vendors/subscription`                  |
+| Admin    | `/admin/users`, `/admin/menu-items`, `/admin/transactions`                         |
+| Webhook  | `POST /webhooks/stripe` (signature verified)                                       |
+ 
+All routes are prefixed with `/api/v1`.
+ 
