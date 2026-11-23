@@ -13,20 +13,12 @@ if (!uri) {
   throw new Error("MONGODB_URI is not configured.");
 }
 
-// Reuse a single client across hot reloads and warm serverless invocations.
-// A smaller pool avoids exhausting Atlas connection limits on Vercel.
-const globalForMongo = globalThis as unknown as {
-  pizzaHubMongoClient?: MongoClient;
-};
-
-const client =
-  globalForMongo.pizzaHubMongoClient ??
-  new MongoClient(uri, {
-    maxPoolSize: 10,
-    serverSelectionTimeoutMS: 10_000,
-  });
-
-globalForMongo.pizzaHubMongoClient = client;
+// A fresh client per function instance avoids reusing a topology that was
+// closed after a failed connection or a platform teardown.
+const client = new MongoClient(uri, {
+  maxPoolSize: 10,
+  serverSelectionTimeoutMS: 10_000,
+});
 
 export const db = client.db();
 
