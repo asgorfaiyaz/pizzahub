@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { unstable_rethrow } from "next/navigation";
 
 export default function GlobalError({
   error,
@@ -10,6 +11,7 @@ export default function GlobalError({
   error: Error & { digest?: string };
   retry: () => void;
 }) {
+  unstable_rethrow(error);
   useEffect(() => {
     console.error(error);
   }, [error]);

@@ -6,6 +6,7 @@ import { RefreshCwIcon, TriangleAlertIcon } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { unstable_rethrow } from "next/navigation";
 
 export default function Error({
   error,
@@ -14,6 +15,7 @@ export default function Error({
   error: Error & { digest?: string };
   retry: () => void;
 }) {
+  unstable_rethrow(error);
   useEffect(() => {
     console.error(error);
   }, [error]);
